@@ -116,7 +116,8 @@ def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
     chill = playlists.get("Chill", [])
     mixed = playlists.get("Mixed", [])
 
-    total = len(hype)
+    #Fixed the Hype Ratio not being displayed properly :)
+    total = len(all_songs) #Fixed this line
     hype_ratio = len(hype) / total if total > 0 else 0.0
 
     avg_energy = 0.0
@@ -166,9 +167,11 @@ def search_songs(
     q = query.lower().strip()
     filtered: List[Song] = []
 
+
+#Fixed search functionality behavior :)
     for song in songs:
         value = str(song.get(field, "")).lower()
-        if value and value in q:
+        if value and q in value: # Fixed!
             filtered.append(song)
 
     return filtered
@@ -184,7 +187,7 @@ def lucky_pick(
     elif mode == "chill":
         songs = playlists.get("Chill", [])
     else:
-        songs = playlists.get("Hype", []) + playlists.get("Chill", [])
+        songs = playlists.get("Hype", []) + playlists.get("Chill", []) + playlists.get("Mixed", [])
 
     return random_choice_or_none(songs)
 

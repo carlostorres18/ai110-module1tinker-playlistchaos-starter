@@ -248,11 +248,22 @@ def add_song_sidebar():
             "energy": energy,
             "tags": tags,
         }
+        # Fixed duplication bug that would allow the users to put duplicates of songs
         if title and artist:
             normalized = normalize_song(song)
             all_songs = st.session_state.songs[:]
-            all_songs.append(normalized)
-            st.session_state.songs = all_songs
+            # this checks on whether a title and artist song has been added, by translating everything to lowercase
+            # and then checks if the song is already in the playlist
+            is_duplicate = any(
+                s.get("title", "").lower() == normalized["title"].lower()
+                and s.get("artist", "").lower() == normalized["artist"].lower()
+                for s in all_songs
+            )
+            if is_duplicate:
+                st.sidebar.warning(f'"{normalized["title"]}" by {normalized["artist"]} is already in the playlist.')
+            else:
+                all_songs.append(normalized)
+                st.session_state.songs = all_songs
 
 
 def playlist_tabs(playlists):
